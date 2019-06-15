@@ -13,7 +13,13 @@ func main(){
 
 	fileName := askName()
 	questions, answers, length := parseCSV(fileName)
-	runQuiz(questions, answers, length)
+
+	// parseCSV will return these values in the event that our inputs are invalid
+	if (questions == nil && answers == nil && length == 0){
+	} else {
+		runQuiz(questions, answers, length)
+	}
+
 }
 
 
@@ -38,6 +44,8 @@ func askName() (string){
 	return csvName
 }
 
+
+// Parses through the CSV file then creates slices containing the questions and answers
 func parseCSV(csvName string) ([]string, []string, int){
 	// Initializing a counter variable to use later to store data from the CSV
 	var i int = 0
@@ -64,10 +72,12 @@ func parseCSV(csvName string) ([]string, []string, int){
 			// If an error has been produced, print it out and continue incrementing i
 			fmt.Println("%s", error)
 
-			// If i exceeds the maximum number of questions, assumed to be 200, we can assume the file doesnt exist
 			i++
+
+			// If i exceeds the maximum number of questions, assumed to be 200, we can assume the file doesnt exist
 			if (i > 200) {
 				fmt.Println("Exceeded 200 questions and errors are occuring, your file likely doesnt exist!")
+				return nil, nil, 0
 				break
 			}
 		} else {
@@ -82,23 +92,35 @@ func parseCSV(csvName string) ([]string, []string, int){
 	return questionStorage, answerStorage, i
 }
 
-// *********************** VERY IMPORTANT ************************
-// TODO: add failsafes for the below functions incase any are nil!
-// ***************************************************************
-
-// As per its name, display a question
+// As per its name, display a question at a specified index
 func displayQuestion(questions []string, i int ){
+
+	// If the index is negative or the array doesn't exist, we can assume this has failed
+	if i < 0 || questions == nil {
+		return
+	}
+
 	fmt.Printf("%s : ", questions[i])
 }
 
 // Trims the newline character from the string obtained through the Reader
 func trimNewline(str string) (string){
+	// Check if the input is invalid
+	if str == nil {
+		printf("Invalid string , returning nil\n")
+		return nil
+	}
 	str = strings.TrimSuffix(str, "\n")
 	return str
 }
 
 // Displays the current question then grabs the users answer and returns it
 func displayQuiz(questions, answers []string, i int) (string){
+	// Check if input is invalid
+	if i < 0 || questions == nil || answers == nil{
+		printf("Invalid input\n")
+		return nil, nil, -1
+	}
 	answerReader := bufio.NewReader(os.Stdin)
 	displayQuestion(questions, i)
 	currentAnswer, _ := answerReader.ReadString('\n')
@@ -111,6 +133,12 @@ func displayQuiz(questions, answers []string, i int) (string){
 
 // Actually runs the quiz and prints how many questions you got correct!
 func runQuiz(questions, answers []string, length int){
+	// Check if input is invalid
+	if i < 0 || questions == nil || answers == nil{
+		printf("Invalid input\n")
+		return nil, nil, -1
+	}
+
 	// Keeps track of how many questions were answered correctly
 	correct := 0
 
