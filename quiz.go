@@ -82,46 +82,53 @@ func parseCSV(csvName string) ([]string, []string, int){
 	return questionStorage, answerStorage, i
 }
 
-//TODO: add failsafes for the below functions incase any are nil!
+// *********************** VERY IMPORTANT ************************
+// TODO: add failsafes for the below functions incase any are nil!
+// ***************************************************************
 
 // As per its name, display a question
 func displayQuestion(questions []string, i int ){
 	fmt.Printf("%s : ", questions[i])
 }
 
-/* Checks if a question is value. Returns 1 if it is and 0 otherwise
-func checkAnswer(answers []string, i, answer int) (int){
-	if answers[i] == string(answer){
-		return 1
-	} else {
-		return 0
-	}
-}*/
-
+// Trims the newline character from the string obtained through the Reader
 func trimNewline(str string) (string){
 	str = strings.TrimSuffix(str, "\n")
 	return str
 }
 
+// Displays the current question then grabs the users answer and returns it
 func displayQuiz(questions, answers []string, i int) (string){
 	answerReader := bufio.NewReader(os.Stdin)
 	displayQuestion(questions, i)
 	currentAnswer, _ := answerReader.ReadString('\n')
+
+	// Trims the newline character so we can properly compare it to the actual answer later
 	currentAnswer = trimNewline(currentAnswer)
 	return currentAnswer
 }
 
+
+// Actually runs the quiz and prints how many questions you got correct!
 func runQuiz(questions, answers []string, length int){
+	// Keeps track of how many questions were answered correctly
 	correct := 0
+
+	// Prints a fun starting message!
 	fmt.Println("Starting Quiz!")
 	fmt.Println("--------------")
 	fmt.Println("Enter each of your answers after each question")
+
 	for i:=0; i < length; i++{
+		// Grab the user's answer to the current question
 		currentAnswer := displayQuiz(questions, answers, i)
+
 		if (answers[i] == currentAnswer){
+			// if their answer is correct, make sure to increment our counter!
 			fmt.Println("CORRECT!")
 			correct++
 		} else {
+			// if it isn't, they got it wrong. Woeful!
 			fmt.Println("WRONG!")
 			}
 		}
