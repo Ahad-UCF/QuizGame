@@ -9,17 +9,17 @@ import(
 )
 // TODO: Compomentalize code instead of running everything in main
 func main(){
-	// Initializing a counter variable to use later to store data from the CSV
-	var i int = 0
+	fileName := askName()
+	parseCSV(fileName)
+}
 
-	// Initializing a slice to store each line of the CSV
-	lineStorage := make([]string, 0)
-
+func askName() (string){
 	// This will read the command line to grab the name of the CSV file
 	cmdReader := bufio.NewReader(os.Stdin)
 
 	// Print a prompt and then sotre the name os the csv into a string
 	fmt.Printf("Enter the name of your quiz csv, if using default quiz simply press enter: ")
+
 	csvName, _ := cmdReader.ReadString('\n')
 
 	if csvName == "\n"{
@@ -30,6 +30,19 @@ func main(){
 		// set the csvName variable to the user input
 		fmt.Printf("Using %s", csvName)
 	}
+
+	return csvName
+}
+
+func parseCSV(csvName string) ([]string, []string){
+	// Initializing a counter variable to use later to store data from the CSV
+	var i int = 0
+
+	// Initializing a slice to store each question of the CSV
+	questionStorage := make([]string, 0)
+
+	// Initializing a slice to store each answer of the CSV
+	answerStorage := make([]string, 0)
 
 	// Open a file based on user input and then create a reader for it
 	quizFile, _ := os.Open(csvName)
@@ -42,7 +55,6 @@ func main(){
 
 		if error == io.EOF{
 			// If we've reached the end of file, we're done parsing!
-			fmt.Printf("Finished!\n")
 			break
 		} else if error != nil{
 			// If an error has been produced, print it out and continue incrementing i
@@ -56,8 +68,13 @@ func main(){
 			}
 		} else {
 			// Store the line into the slice and then increment the counter
-			lineStorage = append(lineStorage, line[0])
+			questionStorage = append(questionStorage, line[0])
+			answerStorage = append(answerStorage, line[1])
 			i++
 		}
+
 	}
+
+	return questionStorage, answerStorage
+
 }
