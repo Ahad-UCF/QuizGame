@@ -6,12 +6,14 @@ import(
 	"encoding/csv"
 	"os"
 	"io"
+	"strings"
 )
 // TODO: Compomentalize code instead of running everything in main
 func main(){
 
 	fileName := askName()
-	parseCSV(fileName)
+	questions, answers, length := parseCSV(fileName)
+	runQuiz(questions, answers, length)
 }
 
 
@@ -36,7 +38,7 @@ func askName() (string){
 	return csvName
 }
 
-func parseCSV(csvName string) ([]string, []string){
+func parseCSV(csvName string) ([]string, []string, int){
 	// Initializing a counter variable to use later to store data from the CSV
 	var i int = 0
 
@@ -77,6 +79,52 @@ func parseCSV(csvName string) ([]string, []string){
 
 	}
 
-	return questionStorage, answerStorage
-
+	return questionStorage, answerStorage, i
 }
+
+//TODO: add failsafes for the below functions incase any are nil!
+
+// As per its name, display a question
+func displayQuestion(questions []string, i int ){
+	fmt.Printf("%s : ", questions[i])
+}
+
+/* Checks if a question is value. Returns 1 if it is and 0 otherwise
+func checkAnswer(answers []string, i, answer int) (int){
+	if answers[i] == string(answer){
+		return 1
+	} else {
+		return 0
+	}
+}*/
+
+func trimNewline(str string) (string){
+	str = strings.TrimSuffix(str, "\n")
+	return str
+}
+
+func displayQuiz(questions, answers []string, i int) (string){
+	answerReader := bufio.NewReader(os.Stdin)
+	displayQuestion(questions, i)
+	currentAnswer, _ := answerReader.ReadString('\n')
+	currentAnswer = trimNewline(currentAnswer)
+	return currentAnswer
+}
+
+func runQuiz(questions, answers []string, length int){
+	correct := 0
+	fmt.Println("Starting Quiz!")
+	fmt.Println("--------------")
+	fmt.Println("Enter each of your answers after each question")
+	for i:=0; i < length; i++{
+		currentAnswer := displayQuiz(questions, answers, i)
+		if (answers[i] == currentAnswer){
+			fmt.Println("CORRECT!")
+			correct++
+		} else {
+			fmt.Println("WRONG!")
+			}
+		}
+
+		fmt.Printf("You answered %d questions correctly out of %d questions\n", correct, len(questions))
+	}
