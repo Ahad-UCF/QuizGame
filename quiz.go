@@ -10,15 +10,6 @@ import(
 // TODO: Compomentalize code instead of running everything in main
 func main(){
 
-	// Initializing a counter variable to use later to store data from the CSV
-	var i int = 0
-
-	// Initializing a slice to store each question of the CSV
-	questionStorage := make([]string, 0)
-
-	// Initializing a slice to store each answer of the CSV
-	answerStorage := make([]string, 0)
-
 	fileName := askName()
 	parseCSV(fileName)
 }
