@@ -7,10 +7,13 @@ import(
 	"os"
 	"io"
 )
-
+// TODO: Compomentalize code instead of running everything in main
 func main(){
 	// Initializing a counter variable to use later to store data from the CSV
 	var i int = 0
+
+	// Initializing a slice to store each line of the CSV
+	lineStorage := make([]string, 0)
 
 	// This will read the command line to grab the name of the CSV file
 	cmdReader := bufio.NewReader(os.Stdin)
@@ -34,10 +37,9 @@ func main(){
 
 	// Parses through the CSV
 	for {
-		// TODO: Store the line values into an array
-
 		// Read the output of each csv line and store them into variables line and error
 		line, error := csvReader.Read()
+		
 		if error == io.EOF{
 			// If we've reached the end of file, we're done parsing!
 			fmt.Printf("Finished!\n")
@@ -53,8 +55,9 @@ func main(){
 				break
 			}
 		} else {
+			// Store the line into the slice and then increment the counter
+			lineStorage = append(lineStorage, line[0])
 			i++
-			fmt.Printf("%s\n", line)
 		}
 	}
 }
