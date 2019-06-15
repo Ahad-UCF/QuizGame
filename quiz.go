@@ -12,8 +12,11 @@ func main(){
 	// Initializing a counter variable to use later to store data from the CSV
 	var i int = 0
 
-	// Initializing a slice to store each line of the CSV
-	lineStorage := make([]string, 0)
+	// Initializing a slice to store each question of the CSV
+	questionStorage := make([]string, 0)
+
+	// Initializing a slice to store each answer of the CSV
+	answerStorage := make([]string, 0)
 
 	// This will read the command line to grab the name of the CSV file
 	cmdReader := bufio.NewReader(os.Stdin)
@@ -56,7 +59,8 @@ func main(){
 			}
 		} else {
 			// Store the line into the slice and then increment the counter
-			lineStorage = append(lineStorage, line[0])
+			questionStorage = append(questionStorage, line[0])
+			answerStorage = append(answerStorage, line[1])
 			i++
 		}
 	}
