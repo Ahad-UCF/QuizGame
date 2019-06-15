@@ -45,7 +45,6 @@ func main(){
 
 		if error == io.EOF{
 			// If we've reached the end of file, we're done parsing!
-			fmt.Printf("Finished!\n")
 			break
 		} else if error != nil{
 			// If an error has been produced, print it out and continue incrementing i
