@@ -39,7 +39,7 @@ func main(){
 	for {
 		// Read the output of each csv line and store them into variables line and error
 		line, error := csvReader.Read()
-		
+
 		if error == io.EOF{
 			// If we've reached the end of file, we're done parsing!
 			fmt.Printf("Finished!\n")
