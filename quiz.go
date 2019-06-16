@@ -7,19 +7,22 @@ import(
 	"os"
 	"io"
 	"strings"
+	"flag"
 )
-// TODO: Compomentalize code instead of running everything in main
+
 func main(){
 
+	timePtr := flag.Int("Time", 30, "an int")
+	flag.Parse()
 	fileName := askName()
 	questions, answers, length := parseCSV(fileName)
 
 	// parseCSV will return these values in the event that our inputs are invalid
 	if (questions == nil && answers == nil && length == 0){
 	} else {
+		fmt.Printf("You have %d seconds!\n",*timePtr)
 		runQuiz(questions, answers, length)
 	}
-
 }
 
 
@@ -106,9 +109,9 @@ func displayQuestion(questions []string, i int ){
 // Trims the newline character from the string obtained through the Reader
 func trimNewline(str string) (string){
 	// Check if the input is invalid
-	if str == nil {
-		printf("Invalid string , returning nil\n")
-		return nil
+	if str == "" {
+		fmt.Printf("Invalid string , returning nil\n")
+		return ""
 	}
 	str = strings.TrimSuffix(str, "\n")
 	return str
@@ -118,8 +121,8 @@ func trimNewline(str string) (string){
 func displayQuiz(questions, answers []string, i int) (string){
 	// Check if input is invalid
 	if i < 0 || questions == nil || answers == nil{
-		printf("Invalid input\n")
-		return nil, nil, -1
+		fmt.Printf("Invalid input\n")
+		return ""
 	}
 	answerReader := bufio.NewReader(os.Stdin)
 	displayQuestion(questions, i)
@@ -134,9 +137,9 @@ func displayQuiz(questions, answers []string, i int) (string){
 // Actually runs the quiz and prints how many questions you got correct!
 func runQuiz(questions, answers []string, length int){
 	// Check if input is invalid
-	if i < 0 || questions == nil || answers == nil{
-		printf("Invalid input\n")
-		return nil, nil, -1
+	if length < 0 || questions == nil || answers == nil{
+		fmt.Printf("Invalid input\n")
+		return
 	}
 
 	// Keeps track of how many questions were answered correctly
