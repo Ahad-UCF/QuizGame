@@ -58,6 +58,8 @@ func parseCSV(csvName string) ([]string, []string, int){
 	// Initializing a counter variable to use later to store data from the CSV
 	var i int = 0
 
+	const maxQuestions = 200
+
 	// Initializing a slice to store each question of the CSV
 	questionStorage := make([]string, 0)
 
@@ -83,7 +85,7 @@ func parseCSV(csvName string) ([]string, []string, int){
 			i++
 
 			// If i exceeds the maximum number of questions, assumed to be 200, we can assume the file doesnt exist
-			if (i > 200) {
+			if (i > maxQuestions) {
 				fmt.Println("Exceeded 200 questions and errors are occuring, your file likely doesnt exist!")
 				return nil, nil, 0
 				break
