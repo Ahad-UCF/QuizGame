@@ -8,21 +8,26 @@ import(
 	"io"
 	"strings"
 	"flag"
+	"time"
 )
 
 func main(){
-
-	timePtr := flag.Int("Time", 30, "an int")
-	flag.Parse()
 	fileName := askName()
 	questions, answers, length := parseCSV(fileName)
+
+	// Grab the time limit from the user
+	timePtr := flag.Int("Time", 30, "The time limit (seconds)")
+	flag.Parse()
+	timer := time.NewTimer(time.Duration(*timePtr) * time.Second)
 
 	// parseCSV will return these values in the event that our inputs are invalid
 	if (questions == nil && answers == nil && length == 0){
 	} else {
 		fmt.Printf("You have %d seconds!\n",*timePtr)
-		runQuiz(questions, answers, length)
+		correct := runQuiz(questions, answers, length, timer)
+		fmt.Printf("\nYou answered %d questions correctly out of %d questions\n", correct, len(questions))
 	}
+
 }
 
 
@@ -118,28 +123,24 @@ func trimNewline(str string) (string){
 }
 
 // Displays the current question then grabs the users answer and returns it
-func displayQuiz(questions, answers []string, i int) (string){
+func displayQuiz(questions, answers []string, i int){
 	// Check if input is invalid
 	if i < 0 || questions == nil || answers == nil{
 		fmt.Printf("Invalid input\n")
-		return ""
+		return
 	}
-	answerReader := bufio.NewReader(os.Stdin)
 	displayQuestion(questions, i)
-	currentAnswer, _ := answerReader.ReadString('\n')
 
-	// Trims the newline character so we can properly compare it to the actual answer later
-	currentAnswer = trimNewline(currentAnswer)
-	return currentAnswer
+	//return currentAnswer
 }
 
 
 // Actually runs the quiz and prints how many questions you got correct!
-func runQuiz(questions, answers []string, length int){
+func runQuiz(questions, answers []string, length int, time *time.Timer)(int){
 	// Check if input is invalid
 	if length < 0 || questions == nil || answers == nil{
 		fmt.Printf("Invalid input\n")
-		return
+		return 0
 	}
 
 	// Keeps track of how many questions were answered correctly
@@ -152,17 +153,35 @@ func runQuiz(questions, answers []string, length int){
 
 	for i:=0; i < length; i++{
 		// Grab the user's answer to the current question
-		currentAnswer := displayQuiz(questions, answers, i)
+		displayQuiz(questions, answers, i)
+		answer := make(chan string)
 
-		if (answers[i] == currentAnswer){
-			// if their answer is correct, make sure to increment our counter!
-			fmt.Println("CORRECT!")
-			correct++
-		} else {
-			// if it isn't, they got it wrong. Woeful!
-			fmt.Println("WRONG!")
+		// This func serves as a way to grab the users input
+		// We use a goroutine so we can exit the program in the middle of it if time ends
+		go func(){
+			answerReader := bufio.NewReader(os.Stdin)
+			currentAnswer, _ := answerReader.ReadString('\n')
+			// Trims the newline character so we can properly compare it to the actual answer later
+			currentAnswer = trimNewline(currentAnswer)
+			answer <- currentAnswer
+		}()
+
+		// We need to use a select or else the program will not be able to instantly quit when time ends
+		// One case only occurs when the timer has filled, the other only occurs when an answer is seen
+		select{
+		case <-time.C:
+			fmt.Println("OUT OF TIME!")
+			return correct
+		case currentAnswer := <-answer:
+			if (answers[i] == currentAnswer){
+				// if their answer is correct, make sure to increment our counter!
+				fmt.Println("CORRECT!")
+				correct++
+			} else {
+				// if it isn't, they got it wrong. Woeful!
+				fmt.Println("WRONG!")
+				}
 			}
 		}
-
-		fmt.Printf("You answered %d questions correctly out of %d questions\n", correct, len(questions))
+		return correct
 	}
