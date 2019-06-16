@@ -45,8 +45,9 @@ func askName() (string){
 		csvName = "Quiz.csv"
 		fmt.Println("Using default quiz file.")
 	}  else {
-		// set the csvName variable to the user input
-		fmt.Printf("Using %s", csvName)
+		// set the csvName variable to the user input and make sure to trim the newline char!
+		csvName = trimNewline(csvName)
+		fmt.Printf("Using file named: %s\n", csvName)
 	}
 
 	return csvName
@@ -80,21 +81,19 @@ func parseCSV(csvName string) ([]string, []string, int){
 			break
 		} else if error != nil{
 			// If an error has been produced, print it out and continue incrementing i
-			fmt.Println("%s", error)
-
-			i++
-
-			// If i exceeds the maximum number of questions, assumed to be 200, we can assume the file doesnt exist
-			if (i > maxQuestions) {
-				fmt.Println("Exceeded 200 questions and errors are occuring, your file likely doesnt exist!")
-				return nil, nil, 0
-				break
-			}
+			fmt.Println("CSV likely doesn't exist!")
+			os.Exit(1)
 		} else {
 			// Store the line into the slice and then increment the counter
 			questionStorage = append(questionStorage, line[0])
 			answerStorage = append(answerStorage, line[1])
 			i++
+			// If i exceeds the maximum number of questions, assumed to be 200
+			if (i > maxQuestions) {
+				fmt.Println("Exceeded %d questions!", maxQuestions)
+				return nil, nil, 0
+				break
+			}
 		}
 
 	}
