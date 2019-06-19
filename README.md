@@ -6,5 +6,5 @@ This golang document will read questions (with a limit of 200 questions) from a 
 
 ### How to run
 In order to run this program from a terminal, enter the following command:
-go build quiz.go &&./quiz -Time= <Your Desired Time Limit>
-Where <Your Desired Time Limit> should be the amount of seconds you wish to set as your time limit. Note that this should be entered as an integer value rather than a string. In other words, the value 5 should be entered rather than the word five.
+go build quiz.go &&./quiz -Time= [Your Desired Time Limit]
+Where [Your Desired Time Limit] should be the amount of seconds you wish to set as your time limit. Note that this should be entered as an integer value rather than a string. In other words, the value 5 should be entered rather than the word five.
